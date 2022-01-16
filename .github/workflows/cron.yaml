@@ -1,0 +1,34 @@
+name: Clojure CI Security
+
+on:
+  schedule:
+    - cron:  "15 * * * *"
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Setup Clojure
+        uses: DeLaGuardo/setup-clojure@master
+        with:
+          tools-deps: '1.10.3.967'
+      - name: Cache jars
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: maven-${{ hashFiles('deps.edn') }}
+          restore-keys: |
+            maven-
+      - name: Install nvd security
+        run: clojure -Ttools install nvd-clojure/nvd-clojure '{:mvn/version "RELEASE"}' :as nvd
+      - name: Install nvd security
+        run: clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
