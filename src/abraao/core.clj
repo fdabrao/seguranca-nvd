@@ -1,5 +1,8 @@
 (ns abraao.core
   (:gen-class))
 
-(defn -main []
+(defn imprimir-mensagem []
   (println "Olá Mundo !!!"))
+
+(defn -main []
+  (imprimir-mensagem))
