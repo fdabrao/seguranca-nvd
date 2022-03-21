@@ -54,14 +54,14 @@ jobs:
           total=`cat /tmp/nvd.txt | grep "vulnerabilities detected" | grep -Eo '[0-9]+ vulne' | grep -Eo '[0-9]+ ' | head -1 | bc`
           echo "::set-output name=saida::$total"
 
-      - name: Print values
-        run: 
-          if [[ ${{steps.secoutput.outputs.saida}} == 0 ]]; then 
-            exit 0; 
-          else
-            if [[ ${{steps.secoutput.outputs.saida}} >= 0 ]]; then 
-              exit 1; 
-            else 
-              clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"' 2> /tmp/infos.txt 1> /tmp/nvd.txt
-            fi 
-          fi 
+      - name: Error security
+        if: steps.secoutput.outputs.saida > 0
+        run: exit 1
+
+      - name: Security OK
+        if: steps.secoutput.outputs.saida == 0
+        run: exit 0
+
+      - name: Retry
+        if: steps.secoutput.outputs.saida == ""
+        run: clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"'
