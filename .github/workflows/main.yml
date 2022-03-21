@@ -48,11 +48,10 @@ jobs:
         #run: clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"'
         run:  |
           clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"' > /tmp/nvd.txt
-          total=`cat /tmp/nvd.txt | grep "vulnerabilities detected" | grep -Eo '[0-9]+ ' | head -1`
-          echo "::set-output name=saida::$total"
+          echo `cat /tmp/nvd.txt | grep "vulnerabilities detected" | grep -Eo '[0-9]+ ' | head -1`
 
       - name: Retry
         #if: steps.seguranca_check.outputs.saida == 1
         #run: clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"'
-        run: echo ${{ steps.seguranca.outputs.saida }}
+        run: echo ${{ steps.seguranca.outputs }}
           
