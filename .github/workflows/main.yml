@@ -54,11 +54,11 @@ jobs:
         run: clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"'
 
       - name: Error Success
-        id: retry
+        id: security_error
         if: "steps.seguranca.exitcode == 255"
         run: exit 255
 
       - name: Success
-        id: retry
+        id: security_ok
         if: "steps.seguranca.exitcode == 0"
         run: exit 0
