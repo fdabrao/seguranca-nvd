@@ -42,4 +42,7 @@ jobs:
         run: clojure -Ttools install nvd-clojure/nvd-clojure '{:mvn/version "RELEASE"}' :as nvd
 
       - name: Verify nvd security
-        run: clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"' 2> /tmp/infos.txt 1> /tmp/nvd.txt
+        continue-on-error: true
+        run: |
+          clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"' 2> /tmp/infos.txt 1> /tmp/nvd.txt
+          echo " `echo /tmp/nvd.txt`"
