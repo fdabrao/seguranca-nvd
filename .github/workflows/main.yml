@@ -56,4 +56,12 @@ jobs:
 
       - name: Print values
         run: 
-          echo ${{steps.secoutput.outputs.saida}}
+          if [[ ${{steps.secoutput.outputs.saida}} == 0 ]]; then 
+            exit 0; 
+          else
+            if [[ ${{steps.secoutput.outputs.saida}} >= 0 ]]; then 
+              exit 1; 
+            else 
+              clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"' 2> /tmp/infos.txt 1> /tmp/nvd.txt
+            fi 
+          fi 
