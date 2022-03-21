@@ -49,15 +49,17 @@ jobs:
       - name: Output nvd security
         continue-on-error: true
         id: secoutput
+        #  total=`cat /tmp/nvd.txt | grep "vulnerabilities detected" | grep -Eo '[0-9]+ vulne' | grep -Eo '[0-9]+ ' | head -1 | bc`
         run: |
           set -x
-          total=`cat /tmp/nvd.txt | grep "vulnerabilities detected" | grep -Eo '[0-9]+ vulne' | grep -Eo '[0-9]+ ' | head -1 | bc`
+          total=''
           echo "::set-output name=saida::$total"
 
       - name: Error security
         if: steps.secoutput.outputs.saida > 0
         run: |
           echo "$(cat /tmp/nvd.txt)"
+          curl "https://${{ github.actor }}:${{ github.token }}@api.github.com/fdabrao/seguranca-nvd/buzzlabs/statuses/${COMMIT_SHA}" -d "{\"state\": \"success\",\"target_url\": \"https://github.com/OliviaAIPartners/buzzlabs/pull/${PULL_NUMBER}/checks?check_run_id=${RUN_ID}\",\"description\": \"${total}%\",\"context\": \"Resultado cobertura dos testes\"}"
           exit 1
 
       - name: Security OK
