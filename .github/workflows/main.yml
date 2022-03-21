@@ -63,7 +63,7 @@ jobs:
           exit 1
 
       - name: Security OK
-        if: steps.secoutput.outputs.saida == 0
+        if: steps.secoutput.outputs.saida != ''
         run: exit 0
 
       - name: Retry
