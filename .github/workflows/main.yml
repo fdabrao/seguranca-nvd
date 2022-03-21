@@ -46,9 +46,10 @@ jobs:
         id: seguranca
         continue-on-error: true
         #run: clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"'
-        run: |
-          exit 1
-          echo "::set-output name=saida::$?"
+        run:  |
+          clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"' > /tmp/nvd.txt
+          total=`cat /tmp/nvd.txt | grep "vulnerabilities detected" | grep -Eo '[0-9]+ ' | head -1`
+          echo "::set-output name=saida::$total"
 
       - name: Retry
         #if: steps.seguranca_check.outputs.saida == 1
