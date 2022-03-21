@@ -50,4 +50,5 @@ jobs:
         run: |
           set -x
           total=`cat /tmp/nvd.txt | grep "vulnerabilities detected" | grep -Eo '[0-9]+ vulne' | grep -Eo '[0-9]+ ' | head -1`
-          echo "Total Security: $total"
+          echo "$total" | bc
+          
