@@ -47,11 +47,10 @@ jobs:
         continue-on-error: true
         #run: clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"'
         run:  |
-          clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"' > /tmp/nvd.txt
-          echo `cat /tmp/nvd.txt | grep "vulnerabilities detected" | grep -Eo '[0-9]+ ' | head -1`
+          clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"' > /tmp/nvd.txt          
 
       - name: Retry
         #if: steps.seguranca_check.outputs.saida == 1
         #run: clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"'
-        run: echo ${{ steps.seguranca.outputs }}
+        run: echo `cat /tmp/nvd.txt | grep "vulnerabilities detected" | grep -Eo '[0-9]+ vulne' | grep -Eo '[0-9]+ ' | head -1`
           
