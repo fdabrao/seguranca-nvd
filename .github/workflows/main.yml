@@ -56,7 +56,9 @@ jobs:
 
       - name: Error security
         if: steps.secoutput.outputs.saida > 0
-        run: exit 1
+        run: |
+          echo "$(cat /tmp/nvd.txt)"
+          exit 1
 
       - name: Security OK
         if: steps.secoutput.outputs.saida == 0
