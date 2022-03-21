@@ -46,13 +46,10 @@ jobs:
         id: seguranca
         continue-on-error: true
         #run: clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"'
-        run: |
-          exit 1
+        run: exit 1
 
       - name: Verify success or retry
-        continue-on-error: true
         id: retry
-        if: always()
         run: |
           if ${{ steps.seguranca.exitcode == 1 }}; then
             clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"'
