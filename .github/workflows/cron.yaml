@@ -1,54 +1,54 @@
-name: Clojure CI Security
+# name: Clojure CI Security
 
-on:
-  #push:
-  #schedule:
-  #  - cron:  "15 * * * *"
+# on:
+#   #push:
+#   #schedule:
+#   #  - cron:  "15 * * * *"
 
-jobs:
-  security:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          lfs: true
-      - name: Setup Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
-      - name: Setup Clojure
-        uses: DeLaGuardo/setup-clojure@master
-        with:
-          tools-deps: '1.10.3.967'
-      - name: Cache jars
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: maven-${{ hashFiles('deps.edn') }}
-          restore-keys: |
-            maven-
-      - name: Validate nvd security
-        id: sec
-        run: |
-          clojure -Ttools install nvd-clojure/nvd-clojure '{:mvn/version "RELEASE"}' :as nvd
-          clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"' > security.md
-          if [ $(grep 'vulnerabilities detected' security.md | awk '{ print $1 }') -gt 0 ]; then echo ::set-output name=status::failure; else echo ::set-output name=status::success; fi
-          rm security.md
-      - if: ${{ steps.sec.outputs.status == 'failure' }}
-        name: Badge
-        uses: RubbaBoy/BYOB@v1.2.0
-        with:
-          NAME: securities
-          LABEL: 'securities'
-          STATUS: "securities problems here"
-          COLOR: red
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - if: ${{ steps.sec.outputs.status == 'success' }}
-        name: Badge
-        uses: RubbaBoy/BYOB@v1.2.0
-        with:
-          NAME: securities
-          LABEL: 'securities'
-          STATUS: 'no problem with securities'
-          COLOR: green
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+# jobs:
+#   security:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#         with:
+#           lfs: true
+#       - name: Setup Java
+#         uses: actions/setup-java@v1
+#         with:
+#           java-version: 11
+#       - name: Setup Clojure
+#         uses: DeLaGuardo/setup-clojure@master
+#         with:
+#           tools-deps: '1.10.3.967'
+#       - name: Cache jars
+#         uses: actions/cache@v2
+#         with:
+#           path: ~/.m2
+#           key: maven-${{ hashFiles('deps.edn') }}
+#           restore-keys: |
+#             maven-
+#       - name: Validate nvd security
+#         id: sec
+#         run: |
+#           clojure -Ttools install nvd-clojure/nvd-clojure '{:mvn/version "RELEASE"}' :as nvd
+#           clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"' > security.md
+#           if [ $(grep 'vulnerabilities detected' security.md | awk '{ print $1 }') -gt 0 ]; then echo ::set-output name=status::failure; else echo ::set-output name=status::success; fi
+#           rm security.md
+#       - if: ${{ steps.sec.outputs.status == 'failure' }}
+#         name: Badge
+#         uses: RubbaBoy/BYOB@v1.2.0
+#         with:
+#           NAME: securities
+#           LABEL: 'securities'
+#           STATUS: "securities problems here"
+#           COLOR: red
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#       - if: ${{ steps.sec.outputs.status == 'success' }}
+#         name: Badge
+#         uses: RubbaBoy/BYOB@v1.2.0
+#         with:
+#           NAME: securities
+#           LABEL: 'securities'
+#           STATUS: 'no problem with securities'
+#           COLOR: green
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
