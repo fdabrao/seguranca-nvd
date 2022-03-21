@@ -48,7 +48,12 @@ jobs:
 
       - name: Output nvd security
         continue-on-error: true
+        id: secoutput
         run: |
           set -x
           total=`cat /tmp/nvd.txt | grep "vulnerabilities detected" | grep -Eo '[0-9]+ vulne' | grep -Eo '[0-9]+ ' | head -1 | bc`
           echo "::set-output name=saida::$total"
+
+      - name: Print values
+        run: 
+          echo ${{steps.secoutput.outputs.saida}}
