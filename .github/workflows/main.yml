@@ -52,7 +52,7 @@ jobs:
         id: seguranca_check
         continue-on-error: true
         #run: clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"'
-        run: echo "::set-output name=saida::${{ steps.seguranca.exitcode }}"
+        run: echo "::set-output name=saida::$?"
 
       - if: steps.seguranca_check.outputs.saida == 1
         name: Retry
