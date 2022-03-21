@@ -48,11 +48,17 @@ jobs:
         #run: clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"'
         run: exit 1
 
-      - name: Verify success or retry
+      - name: Retry
         id: retry
-        run: |
-          if ${{ steps.seguranca.exitcode == 1 }}; then
-            clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"'
-          else if ${{ steps.seguranca.exitcode == 255 }}; then
-            exit 1
-          end
+        if: "steps.seguranca.exitcode == 1"
+        run: clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"'
+
+      - name: Error Success
+        id: retry
+        if: "steps.seguranca.exitcode == 255"
+        run: exit 255
+
+      - name: Success
+        id: retry
+        if: "steps.seguranca.exitcode == 0"
+        run: exit 0
