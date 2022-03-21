@@ -47,20 +47,24 @@ jobs:
         continue-on-error: true
         #run: clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"'
         run:  |
+          set -x
           clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"' > /tmp/nvd.txt
-
-      - name: Retry
-        #if: steps.seguranca_check.outputs.saida == 1
-        #run: clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"'
-        run: |
           $valor = `cat /tmp/nvd.txt | grep "vulnerabilities detected" | grep -Eo '[0-9]+ vulne' | grep -Eo '[0-9]+ ' | head -1`
-          if $valor > 0 ; then
-            exit 1
-          else
-            if $valor = ""; then
-              clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"' > /tmp/nvd.txt
-            else
-              exit 0
-            end
-          end
+          echo "error: $valor"
+
+      # - name: Retry
+      #   #if: steps.seguranca_check.outputs.saida == 1
+      #   #run: clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"'
+      #   run: |
+
+      #     $valor = `cat /tmp/nvd.txt | grep "vulnerabilities detected" | grep -Eo '[0-9]+ vulne' | grep -Eo '[0-9]+ ' | head -1`
+      #     if $valor > 0 ; then
+      #       exit 1
+      #     else
+      #       if $valor = ""; then
+      #         clojure -J-Dclojure.main.report=stderr -Tnvd nvd.task/check :classpath '"'"$(clojure -Spath)"'"' > /tmp/nvd.txt
+      #       else
+      #         exit 0
+      #       end
+      #     end
           
